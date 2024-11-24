@@ -38,7 +38,7 @@ const Navbar = () => {
             href={`/`}
             className="text-2xl font-bold text-emerald-400 flex items-center space-x-2"
           >
-            <ShoppingBasketIcon className="size-8 mr-1 font-bold" />
+            <ShoppingBasketIcon className="size-8 mr-1 mb-1 font-bold" />
             KR-Store
           </Link>
 

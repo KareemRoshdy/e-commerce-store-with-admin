@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Cart",
@@ -9,7 +10,12 @@ interface CartLayoutProps {
 }
 
 const CartLayout = ({ children }: CartLayoutProps) => {
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <Footer />
+    </>
+  );
 };
 
 export default CartLayout;
