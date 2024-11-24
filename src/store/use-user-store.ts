@@ -19,7 +19,7 @@ interface UserState {
   // refreshToken: () => Promise<void>;
 }
 
-export const useUserStore = create<UserState>((set, get) => ({
+export const useUserStore = create<UserState>((set) => ({
   user: null,
   loading: false,
   checkingAuth: true,
