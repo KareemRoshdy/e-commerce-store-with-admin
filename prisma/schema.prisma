@@ -1,0 +1,85 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  admin
+  customer
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  role      UserRole  @default(customer)
+  cartItem  CartItem? // علاقة واحد إلى واحد مع CartItem
+  coupons   Coupon[] // علاقة واحد إلى متعدد مع Coupons
+  orders    Order[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model CartItem {
+  id           String        @id @default(uuid())
+  user         User          @relation(fields: [userId], references: [id])
+  userId       String        @unique
+  cartProducts CartProduct[] // علاقة واحد إلى متعدد مع CartProduct
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  Order        Order[]
+}
+
+model Product {
+  id           String        @id @default(uuid())
+  name         String
+  description  String
+  price        Float
+  image        String
+  category     String
+  isFeatured   Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  cartProducts CartProduct[] // علاقة واحد إلى متعدد مع CartProduct
+}
+
+model CartProduct {
+  id         String   @id @default(uuid())
+  cartItem   CartItem @relation(fields: [cartItemId], references: [id])
+  cartItemId String
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  String
+  quantity   Int      @default(1) // كمية المنتج
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Coupon {
+  id                 String   @id @default(uuid())
+  code               String   @unique
+  discountPercentage Int      @default(0) // يمكنك إضافة قيمة افتراضية
+  expirationDate     DateTime
+  isActive           Boolean  @default(true)
+  user               User     @relation(fields: [userId], references: [id])
+  userId             String   @unique // التأكد من أن المستخدم يمكن أن يرتبط بكوبون واحد فقط
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Order {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  cartItem        CartItem @relation(fields: [cartItemId], references: [id])
+  cartItemId      String
+  totalAmount     Float    @default(0) // Calculated based on cart items
+  stripeSessionId String?  @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
