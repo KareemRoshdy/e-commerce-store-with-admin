@@ -43,76 +43,83 @@ const Navbar = ({ user, cart }: NavbarProps) => {
         <div className="flex flex-wrap justify-between items-center">
           <Link
             href={`/`}
-            className="text-2xl font-bold text-emerald-400 flex items-center space-x-2"
+            className="text-2xl font-bold text-emerald-400 flex items-center space-x-2 mb-3 md:mb-0"
           >
             <ShoppingBasketIcon className="size-8 mr-1 mb-1 font-bold" />
             KR-Store
           </Link>
 
-          <nav className="flex flex-wrap items-center gap-4">
-            <Link
-              href={`/`}
-              className="text-fray-300 hover:text-emerald-400 transition duration-300 ease-in-out"
-            >
-              Home
-            </Link>
-
-            {user && (
+          <nav className="flex flex-wrap items-center gap-4 justify-between md:justify-center w-full md:w-auto">
+            <div>
               <Link
-                href={"/cart"}
-                className="relative group text-gray-300 hover:text-emerald-400 transition duration-300 
+                href={`/`}
+                className="text-fray-300 hover:text-emerald-400 transition duration-300 ease-in-out mr-4"
+              >
+                Home
+              </Link>
+
+              {user && (
+                <Link
+                  href={"/cart"}
+                  className="relative group text-gray-300 hover:text-emerald-400 transition duration-300 
           ease-in-out"
-              >
-                <ShoppingCart
-                  className="inline-block mr-1 group-hover:text-emerald-400"
-                  size={20}
-                />
-                <span className="hidden sm:inline">Cart</span>
+                >
+                  <ShoppingCart
+                    className="inline-block mr-1 group-hover:text-emerald-400"
+                    size={20}
+                  />
+                  <span className="hidden sm:inline">Cart</span>
 
-                {cart && cart.length > 0 && (
-                  <span
-                    className="absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2 py-0.5 
+                  {cart && cart.length > 0 && (
+                    <span
+                      className="absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2 py-0.5 
                   text-xs group-hover:bg-emerald-400 transition duration-300 ease-in-out"
-                  >
-                    {cart.length}
-                  </span>
-                )}
-              </Link>
-            )}
+                    >
+                      {cart.length}
+                    </span>
+                  )}
+                </Link>
+              )}
+            </div>
 
-            {isAdmin && (
-              <Link
-                className="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1 rounded-md font-medium
+            <div className="flex items-center gap-4">
+              {isAdmin && (
+                <Link
+                  className="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1 rounded-md font-medium
 								 transition duration-300 ease-in-out flex items-center"
-                href={"/dashboard"}
-              >
-                <Lock className="inline-block mr-1" size={18} />
-                <span className="hidden sm:inline">Dashboard</span>
-              </Link>
-            )}
+                  href={"/dashboard"}
+                  title="dashboard"
+                >
+                  <Lock className="inline-block mr-1" size={18} />
+                  <span className="hidden sm:inline">Dashboard</span>
+                </Link>
+              )}
 
-            {user ? (
-              <LogoutButton />
-            ) : (
-              <>
-                <Link
-                  href={"/auth/signup"}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 
+              {user ? (
+                <LogoutButton />
+              ) : (
+                <>
+                  <Link
+                    href={"/auth/signup"}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 
 									rounded-md flex items-center transition duration-300 ease-in-out"
-                >
-                  <UserPlus className="mr-2" size={18} />
-                  Sign Up
-                </Link>
-                <Link
-                  href={"/auth/login"}
-                  className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 
+                    title="signup"
+                  >
+                    <UserPlus className="mr-2" size={18} />
+                    Sign Up
+                  </Link>
+                  <Link
+                    href={"/auth/login"}
+                    className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 
 									rounded-md flex items-center transition duration-300 ease-in-out"
-                >
-                  <LogIn className="mr-2" size={18} />
-                  Login
-                </Link>
-              </>
-            )}
+                    title="login"
+                  >
+                    <LogIn className="mr-2" size={18} />
+                    Login
+                  </Link>
+                </>
+              )}
+            </div>
           </nav>
         </div>
       </div>
