@@ -6,13 +6,18 @@ import { MoveRight } from "lucide-react";
 import Link from "next/link";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "@/lib/axios";
+import { ProductsInCart } from "@/types";
 
 const stripePromise = loadStripe(
   "pk_test_51Q7MdpDOkfiu0yN4IITZf60xKElKBQtKhh49fkLD3WSzxQlPNwC2NxETTSxf2w5VR2ZWjAI3LQAlCQlogkw1ZjVJ00bwvO42Tt"
 );
 
-const OrderSummary = () => {
-  const { total, subtotal, coupon, isCouponApplied, cart } = useCartStore();
+interface OrderSummaryProps {
+  cart: ProductsInCart[] | [];
+}
+
+const OrderSummary = ({ cart }: OrderSummaryProps) => {
+  const { total, subtotal, coupon, isCouponApplied } = useCartStore();
   const savings = subtotal - total;
 
   const formattedSubtotal = subtotal.toFixed(2);

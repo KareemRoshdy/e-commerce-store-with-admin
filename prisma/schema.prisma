@@ -76,7 +76,7 @@ model Order {
   id              String   @id @default(uuid())
   userId          String
   user            User     @relation(fields: [userId], references: [id])
-  cartItem        CartItem @relation(fields: [cartItemId], references: [id])
+  cartItem        CartItem @relation(fields: [cartItemId], references: [id], onDelete: Cascade)
   cartItemId      String
   totalAmount     Float    @default(0) // Calculated based on cart items
   stripeSessionId String?  @unique

@@ -3,6 +3,7 @@
 import { useCartStore } from "@/store/use-cart-store";
 import { Product } from "@/store/use-product-store";
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface FeaturedProductsProps {
@@ -12,6 +13,7 @@ interface FeaturedProductsProps {
 const FeaturedProducts = ({ featuredProducts }: FeaturedProductsProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
+  const router = useRouter();
 
   const { addToCart } = useCartStore();
 
@@ -77,7 +79,10 @@ const FeaturedProducts = ({ featuredProducts }: FeaturedProductsProps) => {
                         ${product.price.toFixed(2)}
                       </p>
                       <button
-                        onClick={() => addToCart(product)}
+                        onClick={async () => {
+                          await addToCart(product);
+                          router.refresh();
+                        }}
                         className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 flex items-center justify-center"
                       >
                         <ShoppingCart className="size-4 mr-2" />

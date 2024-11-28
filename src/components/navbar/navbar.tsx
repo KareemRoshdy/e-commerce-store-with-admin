@@ -1,32 +1,39 @@
 "use client";
 
-import { useCartStore } from "@/store/use-cart-store";
-import { useUserStore } from "@/store/use-user-store";
+import { ProductsInCart } from "@/types";
+import { User } from "@prisma/client";
+import Link from "next/link";
+
 import {
   ShoppingCart,
   UserPlus,
   LogIn,
-  LogOut,
   Lock,
-  Loader,
   ShoppingBasketIcon,
 } from "lucide-react";
-import Link from "next/link";
+import LogoutButton from "./logout-button";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import axios from "axios";
 
-const Navbar = () => {
-  const { user, checkAuth, logout, loading, checkingAuth } = useUserStore();
-  const { cart } = useCartStore();
+interface NavbarProps {
+  user: User | null;
+  cart: ProductsInCart[] | null;
+}
+
+const Navbar = ({ user, cart }: NavbarProps) => {
+  const router = useRouter();
+
+  const logout = async () => {
+    await axios.post("/auth/logout");
+  };
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  useEffect(() => {
-    if (!checkingAuth && !user) {
+    if (!user) {
       logout();
+      router.refresh();
     }
-  }, [checkingAuth, user, logout]);
+  }, [user, router]);
 
   const isAdmin = user?.role === "admin";
 
@@ -62,7 +69,7 @@ const Navbar = () => {
                 />
                 <span className="hidden sm:inline">Cart</span>
 
-                {cart.length > 0 && (
+                {cart && cart.length > 0 && (
                   <span
                     className="absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2 py-0.5 
                   text-xs group-hover:bg-emerald-400 transition duration-300 ease-in-out"
@@ -85,20 +92,7 @@ const Navbar = () => {
             )}
 
             {user ? (
-              <button
-                onClick={logout}
-                title="logout"
-                className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 
-						rounded-md flex items-center  transition duration-300 ease-in-out"
-                disabled={loading}
-              >
-                {loading ? (
-                  <Loader className="size-5 animate-spin" aria-hidden="true" />
-                ) : (
-                  <LogOut size={18} />
-                )}
-                {/* <span className="hidden sm:inline ml-2">Log Out</span> */}
-              </button>
+              <LogoutButton />
             ) : (
               <>
                 <Link

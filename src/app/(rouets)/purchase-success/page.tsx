@@ -1,10 +1,9 @@
 "use client";
 
 import axios from "@/lib/axios";
-import { useCartStore } from "@/store/use-cart-store";
 import { ArrowRight, CheckCircle, HandHeart, Loader } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import Confetti from "react-confetti";
 
@@ -12,13 +11,10 @@ const SuccessPageContent = () => {
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { clearCart, getCartItems } = useCartStore();
+  const router = useRouter();
+
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
-
-  useEffect(() => {
-    getCartItems();
-  }, [getCartItems]);
 
   useEffect(() => {
     const handleCheckoutSuccess = async (sessionId: string) => {
@@ -26,18 +22,18 @@ const SuccessPageContent = () => {
         await axios.post("/payment/checkout-success", {
           sessionId,
         });
-        getCartItems();
       } catch {
         setError("An error occurred");
       } finally {
         setIsProcessing(false);
+        router.refresh();
       }
     };
 
     if (sessionId) {
       handleCheckoutSuccess(sessionId);
     }
-  }, [sessionId, clearCart, getCartItems]);
+  }, [sessionId, router]);
 
   if (isProcessing) {
     return (

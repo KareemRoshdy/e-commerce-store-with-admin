@@ -1,83 +1,44 @@
-"use client";
+import { verifyTokenForPages } from "@/utils/verifyToken";
+import { redirect } from "next/navigation";
+import { getCartItems } from "@/actions/get-cart-items";
+import { cookies } from "next/headers";
 
-import { useEffect } from "react";
-import { useUserStore } from "@/store/use-user-store";
-import { useRouter } from "next/navigation";
-import { useCartStore } from "@/store/use-cart-store";
-import { motion } from "framer-motion";
-import EmptyCartUI from "./_components/EmptyCartUI";
-import CartItem from "./_components/CartItem";
-import PeopleAlsoBought from "./_components/PeopleAlsoBought";
-import OrderSummary from "./_components/OrderSummary";
-import GiftCouponCard from "./_components/GiftCouponCard";
+import Cart from "./_components/Cart";
+import prisma from "@/utils/db";
 
-const CartPage = () => {
-  const { user, checkAuth } = useUserStore();
-  const { cart } = useCartStore();
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Cart",
+  description: "E-Commerce Store by create next app",
+};
 
-  const router = useRouter();
+const CartPage = async () => {
+  const token = (await cookies()).get("accessToken")?.value as string;
 
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+  const user = await verifyTokenForPages(token);
 
-  useEffect(() => {
-    if (!user) {
-      router.push("/");
-    }
-  }, [user, router]);
+  if (!user) redirect("/");
+
+  const cart = (await getCartItems(user.id)) ?? [];
+
+  const recommendations = await prisma.product.findMany({
+    take: 3,
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      image: true,
+      price: true,
+    },
+  });
 
   return (
     <div className="py-8 md:py-16">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
-        <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
-          <motion.div
-            className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            {cart.length === 0 ? (
-              <EmptyCartUI />
-            ) : (
-              <div className="space-y-6">
-                {cart.map((item) => (
-                  <CartItem key={item.id} item={item} />
-                ))}
-              </div>
-            )}
-
-            <div className="lg:hidden block">
-              {cart.length > 0 && (
-                <motion.div
-                  className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                >
-                  <OrderSummary />
-                  <GiftCouponCard />
-                </motion.div>
-              )}
-            </div>
-
-            {cart.length > 0 && <PeopleAlsoBought />}
-          </motion.div>
-
-          <div className="lg:block hidden">
-            {cart.length > 0 && (
-              <motion.div
-                className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              >
-                <OrderSummary />
-                <GiftCouponCard />
-              </motion.div>
-            )}
-          </div>
-        </div>
+        <Cart cart={cart} recommendations={recommendations} user={user} />
       </div>
     </div>
   );

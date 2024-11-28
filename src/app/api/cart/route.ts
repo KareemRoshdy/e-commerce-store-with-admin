@@ -193,7 +193,8 @@ export async function DELETE(req: NextRequest) {
       { message: "Product removed from cart successfully" },
       { status: 200 }
     );
-  } catch {
+  } catch (error) {
+    console.log(error);
     return NextResponse.json({ message: "Internal error" }, { status: 500 });
   }
 }

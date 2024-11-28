@@ -9,7 +9,7 @@ export function setCookie(accessToken: string, refreshToken: string) {
     secure: process.env.NODE_ENV === "production",
     path: "/",
     sameSite: "strict",
-    maxAge: 15 * 60 * 1000, // 15 minutes
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   });
 
   const refreshTokenCookie = serialize("refreshToken", refreshToken, {
@@ -29,7 +29,7 @@ export const generateTokens = (userId: string) => {
   const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET as string;
 
   const accessToken = jwt.sign({ userId }, accessTokenSecret, {
-    expiresIn: "15m",
+    expiresIn: "30d",
   });
 
   const refreshToken = jwt.sign({ userId }, refreshTokenSecret, {
@@ -44,6 +44,7 @@ export const storeRefreshToken = async (
   userId: string,
   refreshToken: string
 ) => {
+  await ridesClient.del(`refresh_token:${userId}`);
   await ridesClient.set(
     `refresh_token:${userId}`,
     refreshToken,

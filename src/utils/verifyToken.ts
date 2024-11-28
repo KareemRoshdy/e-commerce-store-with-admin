@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { NextRequest } from "next/server";
 import prisma from "./db";
+import { User } from "@prisma/client";
 
 type JWTPayload = {
   userId: string;
@@ -73,6 +74,25 @@ export async function checkIsAdmin(token: string): Promise<string | null> {
     if (!user) return null;
 
     return user.role;
+  } catch {
+    return null;
+  }
+}
+
+export async function verifyTokenForPages(token: string): Promise<User | null> {
+  try {
+    const privateKey = process.env.ACCESS_TOKEN_SECRET as string;
+    const userPayload = jwt.verify(token, privateKey) as JWTPayload;
+
+    if (!userPayload) return null;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userPayload.userId },
+    });
+
+    if (!user) return null;
+
+    return user;
   } catch {
     return null;
   }

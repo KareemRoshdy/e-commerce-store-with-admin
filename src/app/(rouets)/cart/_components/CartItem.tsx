@@ -1,15 +1,42 @@
 "use client";
 
-import { useCartStore } from "@/store/use-cart-store";
 import { Product } from "@/store/use-product-store";
+import axios from "axios";
 import { Minus, Plus, Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface CartItemProps {
   item: Product;
 }
 
 const CartItem = ({ item }: CartItemProps) => {
-  const { loading, removeFromCart, updateQuantity } = useCartStore();
+  const router = useRouter();
+
+  const deleteProductFromCart = async (productId: string) => {
+    try {
+      await axios.delete("/api/cart", { data: { productId } });
+      toast.success("Product removed from cart");
+    } catch {
+      toast.error("failed to delete");
+    } finally {
+      router.refresh();
+    }
+  };
+
+  const updateProductFromCart = async (
+    cartId: string,
+    productId: string,
+    quantity: number
+  ) => {
+    try {
+      await axios.put(`/api/cart/${cartId}`, { productId, quantity });
+    } catch {
+      toast.error("failed to update quantity");
+    } finally {
+      router.refresh();
+    }
+  };
 
   return (
     <div className="rounded-lg border p-4 shadow-sm border-gray-700 bg-gray-800 md:p-6">
@@ -30,7 +57,11 @@ const CartItem = ({ item }: CartItemProps) => {
                      border-gray-600 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2
                       focus:ring-emerald-500"
               onClick={() =>
-                updateQuantity(item.cartId!, item.id!, item.quantity! - 1)
+                updateProductFromCart(
+                  item.cartId!,
+                  item.id!,
+                  item.quantity! - 1
+                )
               }
             >
               <Minus className="text-gray-300" />
@@ -41,7 +72,11 @@ const CartItem = ({ item }: CartItemProps) => {
                      border-gray-600 bg-gray-700 hover:bg-gray-600 focus:outline-none 
                 focus:ring-2 focus:ring-emerald-500"
               onClick={() =>
-                updateQuantity(item.cartId!, item.id!, item.quantity! + 1)
+                updateProductFromCart(
+                  item.cartId!,
+                  item.id!,
+                  item.quantity! + 1
+                )
               }
             >
               <Plus className="text-gray-300" />
@@ -65,8 +100,7 @@ const CartItem = ({ item }: CartItemProps) => {
             <button
               className="inline-flex items-center text-sm font-medium text-red-400
                      hover:text-red-300 hover:underline"
-              onClick={() => removeFromCart(item.id!)}
-              disabled={loading}
+              onClick={() => deleteProductFromCart(item.id!)}
             >
               <Trash />
             </button>

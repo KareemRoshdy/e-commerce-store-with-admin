@@ -4,17 +4,18 @@ import toast from "react-hot-toast";
 import { Loader, ShoppingCart } from "lucide-react";
 import { Product } from "@/store/use-product-store";
 import Image from "next/image";
-import { useUserStore } from "@/store/use-user-store";
 import { useCartStore } from "@/store/use-cart-store";
+import { User } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   product: Product;
+  user: User;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
-  const { user } = useUserStore();
-
+const ProductCard = ({ product, user }: ProductCardProps) => {
   const { addToCart, loading } = useCartStore();
+  const router = useRouter();
 
   const handleAddToCart = () => {
     if (!user) {
@@ -22,6 +23,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       return;
     } else {
       addToCart(product);
+      router.refresh();
     }
   };
 

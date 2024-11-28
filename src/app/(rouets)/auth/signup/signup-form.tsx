@@ -34,6 +34,7 @@ const SignUpForm = () => {
   useEffect(() => {
     if (user) {
       router.push("/");
+      router.refresh();
     }
   }, [user, router]);
 

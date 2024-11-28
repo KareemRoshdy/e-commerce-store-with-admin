@@ -3,6 +3,9 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/navbar/navbar";
 import { Toaster } from "react-hot-toast";
+import { cookies } from "next/headers";
+import { verifyTokenForPages } from "@/utils/verifyToken";
+import { getCartItems } from "@/actions/get-cart-items";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -20,11 +23,17 @@ export const metadata: Metadata = {
   description: "E-Commerce Store by create next app",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const token = (await cookies()).get("accessToken")?.value as string;
+
+  const user = await verifyTokenForPages(token);
+
+  const cart = user ? await getCartItems(user.id) : [];
+
   return (
     <html lang="en">
       <body
@@ -38,7 +47,7 @@ export default function RootLayout({
             </div>
           </div>
           <div className="relative z-50 pt-20">
-            <Navbar />
+            <Navbar cart={cart} user={user} />
             {children}
           </div>
         </main>

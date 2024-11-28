@@ -1,22 +1,21 @@
 "use client";
 
-import { useProductStore } from "@/store/use-product-store";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import ProductCard from "./ProductCard";
 import { Loader } from "lucide-react";
+import { Product, User } from "@prisma/client";
 
 interface CategoryPageProps {
   categoryName: string;
+  products: Product[];
+  user: User;
 }
 
-const CategoryPage = ({ categoryName }: CategoryPageProps) => {
-  const { loading, fetchProductsByCategory, products } = useProductStore();
-
+const CategoryPage = ({ products, categoryName, user }: CategoryPageProps) => {
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetchProductsByCategory(categoryName);
-  }, [fetchProductsByCategory, categoryName]);
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -30,7 +29,7 @@ const CategoryPage = ({ categoryName }: CategoryPageProps) => {
           {categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}
         </motion.h1>
 
-        {loading ? (
+        {!products ? (
           <div className="flex items-center justify-center">
             <Loader className="size-6 animate-spin mr-2" />
             Loading...
@@ -50,7 +49,7 @@ const CategoryPage = ({ categoryName }: CategoryPageProps) => {
               )}
 
               {products?.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.id} product={product} user={user} />
               ))}
             </>
           </motion.div>
