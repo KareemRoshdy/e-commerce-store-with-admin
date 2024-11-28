@@ -17,14 +17,14 @@ const ProductCard = ({ product, user }: ProductCardProps) => {
   const { addToCart, loading } = useCartStore();
   const router = useRouter();
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!user) {
       toast.error("Please login to add product to your cart", { id: "login" });
       return;
-    } else {
-      addToCart(product);
-      router.refresh();
     }
+
+    await addToCart(product);
+    router.refresh();
   };
 
   return (

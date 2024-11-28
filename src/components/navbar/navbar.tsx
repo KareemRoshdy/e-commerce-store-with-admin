@@ -25,7 +25,7 @@ const Navbar = ({ user, cart }: NavbarProps) => {
   const router = useRouter();
 
   const logout = async () => {
-    await axios.post("/auth/logout");
+    await axios.post("/api/auth/logout");
   };
 
   useEffect(() => {

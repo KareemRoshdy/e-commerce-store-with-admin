@@ -95,8 +95,6 @@ export const useCartStore = create<UserCartProps>((set, get) => ({
           : [...state.cart, { ...product, quantity: 1 }];
         return { cart: newCart };
       });
-
-      get().calculateTotals();
     } catch {
       toast.error("An error occurred ,Login first");
     } finally {
