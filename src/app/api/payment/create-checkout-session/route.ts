@@ -116,8 +116,6 @@ const createStripeCoupon = async (
       duration: "once",
     });
 
-    console.log(coupon.id);
-
     return coupon.id;
   } catch {
     throw new Error("Failed to create Stripe coupon.");

@@ -9,21 +9,3 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-// export const createStripeCoupon = async (
-//   discountPercentage: number
-// ): Promise<string> => {
-//   try {
-//     const coupon = await stripe.coupons.create({
-//       percent_off: discountPercentage,
-//       duration: "once",
-//     });
-
-//     console.log(coupon.id);
-
-//     return coupon.id;
-//   } catch (error: any) {
-//     console.error("Error creating coupon:", error.message, error);
-//     throw new Error("Failed to create Stripe coupon.");
-//   }
-// };

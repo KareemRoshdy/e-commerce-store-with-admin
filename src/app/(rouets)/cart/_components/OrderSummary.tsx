@@ -17,7 +17,19 @@ interface OrderSummaryProps {
 }
 
 const OrderSummary = ({ cart }: OrderSummaryProps) => {
-  const { total, subtotal, coupon, isCouponApplied } = useCartStore();
+  const { coupon, isCouponApplied } = useCartStore();
+
+  const subtotal = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity!,
+    0
+  );
+
+  let total = subtotal;
+  if (isCouponApplied && coupon) {
+    const discount = total * (coupon.discountPercentage / 100);
+    total = subtotal - discount;
+  }
+
   const savings = subtotal - total;
 
   const formattedSubtotal = subtotal.toFixed(2);

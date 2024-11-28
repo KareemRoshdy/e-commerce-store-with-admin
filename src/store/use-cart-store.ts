@@ -46,6 +46,7 @@ export const useCartStore = create<UserCartProps>((set, get) => ({
       const res = await axios.post("/coupons/validate", { code });
 
       set({ coupon: res.data, isCouponApplied: true });
+
       get().calculateTotals();
       toast.success("Coupon applied successfully");
     } catch {
@@ -95,6 +96,8 @@ export const useCartStore = create<UserCartProps>((set, get) => ({
           : [...state.cart, { ...product, quantity: 1 }];
         return { cart: newCart };
       });
+
+      get().calculateTotals();
     } catch {
       toast.error("An error occurred ,Login first");
     } finally {
@@ -145,8 +148,8 @@ export const useCartStore = create<UserCartProps>((set, get) => ({
     }
   },
 
-  calculateTotals: () => {
-    const { cart, coupon } = get();
+  calculateTotals: async () => {
+    const { coupon, cart } = get();
 
     const subtotal = cart.reduce(
       (sum, item) => sum + item.price * item.quantity!,

@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from "@/components/navbar/navbar";
+// import Navbar from "@/components/navbar/navbar";
 import { Toaster } from "react-hot-toast";
 import { cookies } from "next/headers";
 import { verifyTokenForPages } from "@/utils/verifyToken";
 import { getCartItems } from "@/actions/get-cart-items";
+import dynamic from "next/dynamic";
+
+const Navbar = dynamic(() => import("@/components/navbar/navbar"));
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -47,7 +50,7 @@ export default async function RootLayout({
             </div>
           </div>
           <div className="relative z-50 pt-20">
-            <Navbar cart={cart} user={user} />
+            <Navbar cart={cart} user={user} token={token} />
             {children}
           </div>
         </main>

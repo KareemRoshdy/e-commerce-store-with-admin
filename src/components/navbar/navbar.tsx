@@ -12,29 +12,14 @@ import {
   ShoppingBasketIcon,
 } from "lucide-react";
 import LogoutButton from "./logout-button";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import axios from "axios";
 
 interface NavbarProps {
   user: User | null;
   cart: ProductsInCart[] | null;
+  token: string;
 }
 
 const Navbar = ({ user, cart }: NavbarProps) => {
-  const router = useRouter();
-
-  const logout = async () => {
-    await axios.post("/api/auth/logout");
-  };
-
-  useEffect(() => {
-    if (!user) {
-      logout();
-      router.refresh();
-    }
-  }, [user, router]);
-
   const isAdmin = user?.role === "admin";
 
   return (

@@ -13,6 +13,9 @@ export const getCartItems = async (userId: string) => {
               include: {
                 product: true,
               },
+              orderBy: {
+                createdAt: "asc", // أو "desc" حسب الترتيب المطلوب
+              },
             },
           },
         },
@@ -23,11 +26,16 @@ export const getCartItems = async (userId: string) => {
       return null;
     }
 
-    const productsInCart = user.cartItem.cartProducts.map((cartProduct) => ({
-      ...cartProduct.product,
-      quantity: cartProduct.quantity,
-      cartId: user.cartItem?.id,
-    }));
+    const productsInCart = user.cartItem.cartProducts
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      )
+      .map((cartProduct) => ({
+        ...cartProduct.product,
+        quantity: cartProduct.quantity,
+        cartId: user.cartItem?.id,
+      }));
 
     return productsInCart;
   } catch (error) {

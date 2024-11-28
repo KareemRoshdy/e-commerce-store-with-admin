@@ -37,7 +37,7 @@ const SuccessPageContent = () => {
 
   if (isProcessing) {
     return (
-      <div className="flex items-center justify-center p-2">
+      <div className="flex items-center justify-center p-2 mt-10 md:mt-0">
         <Loader className="size-4 mr-2 animate-spin" />
         Processing...
       </div>
@@ -46,7 +46,9 @@ const SuccessPageContent = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-2">Error: {error}</div>
+      <div className="flex items-center justify-center p-2 mt-10 md:mt-0">
+        Error: {error}
+      </div>
     );
   }
 
